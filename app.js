@@ -9,8 +9,9 @@ const getUsers = () => {
 }
 const showUsers = users => {
     const tableBody = document.querySelector("#showData");
-    let renderData = users.map(({ name, email, address, _id }, index) => {
-        return `<tr>
+    // let renderData = users.map(({ name, email, address, _id }, index) => {
+    users.map(({ name, email, address, _id }, index) => {
+        tableBody.innerHTML = `<tr>
                     <th scope="row">${index + 1}</th>
                     <td>${name}</td>
                     <td>${email}</td>
@@ -18,7 +19,7 @@ const showUsers = users => {
                     <td><i onClick="deleteUser('${_id}')" class="fas fa-trash me-2"></i><i onClick="getUser('${_id}',this)" class="far fa-edit"></i></td>
                 </tr>`
     });
-    tableBody.innerHTML = renderData.join();
+    // tableBody.innerHTML = renderData.join();
 }
 const editingUser = id => {
     editUserDB(id, userName, email, address);
