@@ -1,63 +1,77 @@
 const getUsers = () => {
     axios.get('https://hello-world-crud.herokuapp.com/users')
         .then(response => {
-            showData(response.data);
+            showUsers(response.data);
         })
         .catch(function (error) {
             console.log(error);
         })
 }
-const showData = data => {
-    let renderData = document.querySelector("#renderData")
-    renderData.innerHTML = "";
-    data.map(userData => {
-        if (userData.index != undefined) {
-            renderData.innerHTML += `<tr><td>${userData.index}</td><td>${userData.name}</td><td>${userData.email}</td><td>${userData.address}</td></tr>`
-        }
+const showUsers = users => {
+    const tableBody = document.querySelector("#showData");
+    let renderData = users.map(({ name, email, address, _id }, index) => {
+        return `<tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${name}</td>
+                    <td>${email}</td>
+                    <td>${address}</td>
+                    <td><i onClick="deleteUser('${_id}')" class="fas fa-trash me-2"></i><i onClick="getUser('${_id}',this)" class="far fa-edit"></i></td>
+                </tr>`
+    });
+    tableBody.innerHTML = renderData.join();
+}
+const editingUser = id => {
+    editUserDB(id, userName, email, address);
+}
+const getUser = (id, e) => {
+    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress"), editBtn = document.querySelector("#edit");
+    let tableRow = e.parentNode.parentNode;
+    let tableRowData = tableRow.childNodes
+    userName.value = tableRowData[3].textContent, email.value = tableRowData[5].textContent, address.value = tableRowData[7].textContent;
+    editBtn.style.display = "inline";
+    editBtn.setAttribute("onClick", `editUserDB('${id}')`)
+}
+const editUserDB = (id) => {
+    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress");
+    const updatedInfo = {};
+    if (userName.value) { updatedInfo.name = userName.value }
+    if (email.value) { updatedInfo.email = email.value }
+    if (address.value) { updatedInfo.address = address.value }
+    axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, updatedInfo).then(res => {
+        userName.value = "", email.value = "", address.value = "";
+        showMessage("User Updated Successfully");
+        getUsers();
+        document.querySelector("#edit").style.display = "none";
     });
 }
 const setUser = () => {
-    let userName = document.querySelector("#userName"), email = document.querySelector("#email"), address = document.querySelector("#address");
-    submitData(userName.value, email.value, address.value);
+    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress");
+    (userName.value, email.value, address.value) ? submitData(userName.value, email.value, address.value) : showMessage("All Fields Are Required");
     userName.value = "", email.value = "", address.value = "";
-}
-const getUser = () => {
-    let userID = document.querySelector("#id");
-    (userID.value == "") ? getUsers() : getUserFromDB(userID.value);
-    userID.value = "";
-}
-
-const getUserFromDB = userID => {
-    axios.get(`https://hello-world-crud.herokuapp.com/user/${userID}`)
-        .then(response => {
-            const makeArr = [response.data];
-            showData(makeArr);
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-}
-const editUser = () => {
-    let userID = document.querySelector("#id"), userName = document.querySelector("#editUserName"), userEmail = document.querySelector("#editEmail"), userAddress = document.querySelector("#editAddress");
-    if (userID.value) { editUserDB(userID.value, userName.value, userEmail.value, userAddress.value); }
-    userID.value = "", userName.value = "", userEmail.value = "", userAddress.value = "";
-}
-const editUserDB = (id, name, email, address) => {
-    if (name) { axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, { name }).then(res => getUsers()); }
-    if (email) { axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, { email }).then(res => getUsers()); }
-    if (address) { axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, { address }).then(res => getUsers()); }
-}
-const deleteUser = () => {
-    let userID = document.querySelector("#id");
-    if (userID.value) { axios.delete(`https://hello-world-crud.herokuapp.com/user/${userID.value}`).then(() => getUsers()); }
-    userID.value = "";
 }
 const submitData = (name, email, address) => {
     axios.post('https://hello-world-crud.herokuapp.com/user', { name, email, address })
         .then(response => {
-            getUser();
+            getUsers();
+            showMessage("User Created Successfully");
         })
         .catch(err => {
             console.log(err);
         })
 }
+const deleteUser = id => {
+    axios.delete(`https://hello-world-crud.herokuapp.com/user/${id}`).then(() => {
+        showMessage("User Deleted Successfully");
+        getUsers()
+    });
+}
+const showMessage = message => {
+    const messageTag = document.querySelector("#message");
+    messageTag.textContent = message;
+    messageTag.style.display = "inline";
+    setTimeout(() => {
+        messageTag.innerText = "";
+        messageTag.style.display = "none";
+    }, 3000)
+}
+getUsers();
