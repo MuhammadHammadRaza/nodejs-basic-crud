@@ -11,7 +11,7 @@ const showUsers = users => {
     const tableBody = document.querySelector("#showData");
     // let renderData = users.map(({ name, email, address, _id }, index) => {
     users.map(({ name, email, address, _id }, index) => {
-        tableBody.innerHTML = `<tr>
+        tableBody.innerHTML += `<tr>
                     <th scope="row">${index + 1}</th>
                     <td>${name}</td>
                     <td>${email}</td>
