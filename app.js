@@ -9,6 +9,7 @@ const getUsers = () => {
 }
 const showUsers = users => {
     const tableBody = document.querySelector("#showData");
+    tableBody.innerHTML = "";
     // let renderData = users.map(({ name, email, address, _id }, index) => {
     users.map(({ name, email, address, _id }, index) => {
         tableBody.innerHTML += `<tr>
