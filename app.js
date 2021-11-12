@@ -26,11 +26,12 @@ const editingUser = id => {
     editUserDB(id, userName, email, address);
 }
 const getUser = (id, e) => {
-    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress"), editBtn = document.querySelector("#edit");
+    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress"), editBtn = document.querySelector("#edit"), submitBtn = document.querySelector("#submitBtn");
     let tableRow = e.parentNode.parentNode;
     let tableRowData = tableRow.childNodes
     userName.value = tableRowData[3].textContent, email.value = tableRowData[5].textContent, address.value = tableRowData[7].textContent;
     editBtn.style.display = "inline";
+    submitBtn.style.display = "none";
     editBtn.setAttribute("onClick", `editUserDB('${id}')`)
 }
 const editUserDB = (id) => {
@@ -44,6 +45,7 @@ const editUserDB = (id) => {
         showMessage("User Updated Successfully");
         getUsers();
         document.querySelector("#edit").style.display = "none";
+        document.querySelector("#submitBtn").style.display = "inline";
     });
 }
 const setUser = () => {
