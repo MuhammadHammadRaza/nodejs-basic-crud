@@ -66,6 +66,8 @@ const submitData = (name, email, address) => {
 const deleteUser = id => {
     axios.delete(`https://hello-world-crud.herokuapp.com/user/${id}`).then(() => {
         showMessage("User Deleted Successfully");
+        document.querySelector("#edit").style.display = "none";
+        document.querySelector("#submitBtn").style.display = "inline";
         getUsers()
     });
 }
