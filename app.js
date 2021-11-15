@@ -32,7 +32,7 @@ const getUser = (id, e, index, name, email, address) => {
     <td><input type="text" class="form-control" id="${id}-name" value="${name}"></td>
     <td><input type="text" class="form-control" id="${id}-email" value="${email}"></td>
     <td><input type="text" class="form-control" id="${id}-address" value="${address}"></td>
-    <td><button onClick="editUserDB('${id}')" class="btn btn-warning">Edit</button>
+    <td><button onClick="editUserDB('${id}', this)" class="btn btn-warning">Edit</button>
     <button onclick="cancel(this, '${index}', '${id}', '${name}', '${email}', '${address}')" class="btn btn-danger">Cancel</button></td>
 </tr>`
 }
@@ -46,7 +46,10 @@ const cancel = (e, index, id, name, email, address) => {
     <td><i onClick="deleteUser('${id}')" class="fas fa-trash me-2"></i><i onClick="getUser('${id}',this, '${index}', '${name}', '${email}', '${address}')" class="far fa-edit"></i></td>
     `
 }
-const editUserDB = (id) => {
+const editUserDB = (id, e) => {
+    e.innerHTML = `<div class="spinner-border spinner-border-sm" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>`
     let name = document.getElementById(`${id}-name`).value, email = document.getElementById(`${id}-email`).value, address = document.getElementById(`${id}-address`).value;
     axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, { name, email, address }).then(res => {
         showMessage("User Updated Successfully");
