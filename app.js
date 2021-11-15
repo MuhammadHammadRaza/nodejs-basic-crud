@@ -12,12 +12,12 @@ const showUsers = users => {
     tableBody.innerHTML = "";
     // let renderData = users.map(({ name, email, address, _id }, index) => {
     users.map(({ name, email, address, _id }, index) => {
-        tableBody.innerHTML += `<tr>
+        tableBody.innerHTML += `<tr'>
                     <th scope="row">${index + 1}</th>
                     <td>${name}</td>
                     <td>${email}</td>
                     <td>${address}</td>
-                    <td><i onClick="deleteUser('${_id}')" class="fas fa-trash me-2"></i><i onClick="getUser('${_id}',this)" class="far fa-edit"></i></td>
+                    <td><i onClick="deleteUser('${_id}')" class="fas fa-trash me-2"></i><i onClick="getUser('${_id}',this, '${index}', '${name}', '${email}', '${address}')" class="far fa-edit"></i></td>
                 </tr>`
     });
     // tableBody.innerHTML = renderData.join();
@@ -25,27 +25,32 @@ const showUsers = users => {
 const editingUser = id => {
     editUserDB(id, userName, email, address);
 }
-const getUser = (id, e) => {
-    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress"), editBtn = document.querySelector("#edit"), submitBtn = document.querySelector("#submitBtn");
+const getUser = (id, e, index, name, email, address) => {
     let tableRow = e.parentNode.parentNode;
-    let tableRowData = tableRow.childNodes
-    userName.value = tableRowData[3].textContent, email.value = tableRowData[5].textContent, address.value = tableRowData[7].textContent;
-    editBtn.style.display = "inline";
-    submitBtn.style.display = "none";
-    editBtn.setAttribute("onClick", `editUserDB('${id}')`)
+    tableRow.innerHTML = `<tr id="${index}">
+    <th scope="row">${index + 1}</th>
+    <td><input type="text" class="form-control" id="${id}-name" value="${name}"></td>
+    <td><input type="text" class="form-control" id="${id}-email" value="${email}"></td>
+    <td><input type="text" class="form-control" id="${id}-address" value="${address}"></td>
+    <td><button onClick="editUserDB('${id}')" class="btn btn-warning">Edit</button>
+    <button onclick="cancel(this, '${index}', '${id}', '${name}', '${email}', '${address}')" class="btn btn-danger">Cancel</button></td>
+</tr>`
+}
+const cancel = (e, index, id, name, email, address) => {
+    const getttingTR = e.parentNode.parentNode;
+    getttingTR.innerHTML = `
+    <th scope="row">${index + 1}</th>
+    <td>${name}</td>
+    <td>${email}</td>
+    <td>${address}</td>
+    <td><i onClick="deleteUser('${id}')" class="fas fa-trash me-2"></i><i onClick="getUser('${id}',this, '${index}', '${name}', '${email}', '${address}')" class="far fa-edit"></i></td>
+    `
 }
 const editUserDB = (id) => {
-    let userName = document.querySelector("#inputName"), email = document.querySelector("#inputEmail"), address = document.querySelector("#inputAddress");
-    const updatedInfo = {};
-    if (userName.value) { updatedInfo.name = userName.value }
-    if (email.value) { updatedInfo.email = email.value }
-    if (address.value) { updatedInfo.address = address.value }
-    axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, updatedInfo).then(res => {
-        userName.value = "", email.value = "", address.value = "";
+    let name = document.getElementById(`${id}-name`).value, email = document.getElementById(`${id}-email`).value, address = document.getElementById(`${id}-address`).value;
+    axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, { name, email, address }).then(res => {
         showMessage("User Updated Successfully");
         getUsers();
-        document.querySelector("#edit").style.display = "none";
-        document.querySelector("#submitBtn").style.display = "inline";
     });
 }
 const setUser = () => {
