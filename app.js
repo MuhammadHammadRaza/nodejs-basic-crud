@@ -22,9 +22,6 @@ const showUsers = users => {
     });
     // tableBody.innerHTML = renderData.join();
 }
-const editingUser = id => {
-    editUserDB(id, userName, email, address);
-}
 const getUser = (id, e, index, name, email, address) => {
     let tableRow = e.parentNode.parentNode;
     tableRow.innerHTML = `<tr id="${index}">
@@ -47,9 +44,7 @@ const cancel = (e, index, id, name, email, address) => {
     `
 }
 const editUserDB = (id, e) => {
-    e.innerHTML = `<div class="spinner-border spinner-border-sm" role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>`
+    e.innerHTML = `<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>`
     let name = document.getElementById(`${id}-name`).value, email = document.getElementById(`${id}-email`).value, address = document.getElementById(`${id}-address`).value;
     axios.put(`https://hello-world-crud.herokuapp.com/user/${id}`, { name, email, address }).then(res => {
         showMessage("User Updated Successfully");
@@ -74,8 +69,6 @@ const submitData = (name, email, address) => {
 const deleteUser = id => {
     axios.delete(`https://hello-world-crud.herokuapp.com/user/${id}`).then(() => {
         showMessage("User Deleted Successfully");
-        document.querySelector("#edit").style.display = "none";
-        document.querySelector("#submitBtn").style.display = "inline";
         getUsers()
     });
 }
